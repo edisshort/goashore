@@ -638,10 +638,24 @@ app.get('/api/leaderboard', async (req, res) => {
 // =====================
 app.get('/api/stats', async (req, res) => {
   try {
-    const stats = await getStats();
-    stats.totalBeaches = await Beach.countDocuments();
-    await stats.save();
-    res.json(stats);
+    const [agg] = await CleanupEvent.aggregate([
+      { $match: { status: 'completed' } },
+      {
+        $group: {
+          _id: null,
+          totalCleanups:        { $sum: 1 },
+          totalTrashCollected:  { $sum: '$trashCollected' },
+          totalVolunteers:      { $sum: '$volunteersJoined' },
+        },
+      },
+    ]);
+    const totalBeaches = await Beach.countDocuments();
+    res.json({
+      totalCleanups:       agg?.totalCleanups       || 0,
+      totalTrashCollected: agg?.totalTrashCollected  || 0,
+      totalVolunteers:     agg?.totalVolunteers      || 0,
+      totalBeaches,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
