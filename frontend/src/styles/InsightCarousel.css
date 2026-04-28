@@ -1,0 +1,177 @@
+/* ── INSIGHT CAROUSEL ──────────────────────────────────────────────────────── */
+.insight-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  user-select: none;
+}
+
+.insight-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #64748b;
+  padding-left: 4px;
+}
+
+/* ── CARD ─────────────────────────────────────────── */
+.insight-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1.5px solid;
+  animation: insightSlide 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+  min-height: 72px;
+}
+
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  opacity: 0.12;
+}
+
+@keyframes insightSlide {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── TYPES ────────────────────────────────────────── */
+.insight-card.type-success {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border-color: #86efac;
+}
+.insight-card.type-success::before { background: #22c55e; }
+
+.insight-card.type-warning {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border-color: #fcd34d;
+}
+.insight-card.type-warning::before { background: #f59e0b; }
+
+.insight-card.type-alert {
+  background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+  border-color: #fca5a5;
+}
+.insight-card.type-alert::before { background: #ef4444; }
+
+.insight-card.type-info {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border-color: #93c5fd;
+}
+.insight-card.type-info::before { background: #3b82f6; }
+
+/* ── ICON ─────────────────────────────────────────── */
+.insight-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── TEXT ─────────────────────────────────────────── */
+.insight-body {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.insight-headline {
+  margin: 0 0 3px 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.insight-sub {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #475569;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── NAV ARROWS ───────────────────────────────────── */
+.insight-nav {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.insight-arrow {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  background: rgba(255,255,255,0.8);
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all 0.15s ease;
+  padding: 0;
+  font-family: inherit;
+}
+
+.insight-arrow:hover {
+  background: white;
+  border-color: rgba(0,0,0,0.25);
+  transform: scale(1.1);
+}
+
+/* ── DOTS ─────────────────────────────────────────── */
+.insight-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  padding: 2px 0;
+}
+
+.insight-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  background: #cbd5e1;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.insight-dot:hover { background: #94a3b8; transform: scale(1.2); }
+.insight-dot.active { width: 22px; border-radius: 4px; }
+
+.insight-dot.active.dot-success { background: #22c55e; }
+.insight-dot.active.dot-warning { background: #f59e0b; }
+.insight-dot.active.dot-alert   { background: #ef4444; }
+.insight-dot.active.dot-info    { background: #3b82f6; }
+
+/* ── RESPONSIVE ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .insight-headline { font-size: 0.85rem; white-space: normal; }
+  .insight-sub      { white-space: normal; }
+  .insight-card     { flex-wrap: wrap; }
+  .insight-nav      { width: 100%; justify-content: flex-end; }
+}
