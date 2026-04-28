@@ -43,6 +43,7 @@ const app = express();
 // =====================
 const allowedOrigins = [
   'http://localhost:3000',
+  'https://goashore.vercel.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
