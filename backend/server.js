@@ -37,6 +37,7 @@ const isEventOwner = (event, reqUser) =>
   (!event.createdByUserId && event.createdBy === reqUser.name);
 
 const app = express();
+app.set('trust proxy', 1); // trust Render/Vercel reverse proxy for rate limiting
 
 // =====================
 // CORS — restrict to your frontend origin
