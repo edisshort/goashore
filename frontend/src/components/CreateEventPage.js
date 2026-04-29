@@ -48,14 +48,48 @@ function CreateEventPage({ beaches, apiBase, showToast, onEventCreated, onCancel
     setPhotoPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+  // Compress an image file in the browser via Canvas before uploading.
+  // Shrinks large phone photos from ~5–10 MB down to ~100–300 KB,
+  // which is what eliminates the 60-second timeout on the Render → Cloudinary hop.
+  const compressImage = (file, maxWidth = 1280, quality = 0.82) =>
+    new Promise((resolve) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' })),
+          'image/jpeg',
+          quality
+        );
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(file); // fallback: upload original if canvas fails
+      };
+      img.src = objectUrl;
+    });
+
   // Upload all staged files to /api/upload in parallel, return array of URL strings
   const uploadPhotos = async (files) => {
-    const uploads = files.map((file) => {
+    // Compress first — this is what prevents the timeout
+    const compressed = await Promise.all(files.map((f) => compressImage(f)));
+
+    const uploads = compressed.map((file) => {
       const data = new FormData();
       data.append('photo', file);
       return axios.post(`${apiBase}/api/upload`, data, {
         headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 60000, // 60s per photo
+        timeout: 60000, // 60s per photo (compressed files upload in <5s normally)
       }).then(res => res.data.url);
     });
     return Promise.all(uploads);

@@ -224,12 +224,17 @@ app.post('/api/upload', uploadLimiter, async (req, res) => {
 
     // Upload to Cloudinary from buffer (no temp file needed)
     const result = await new Promise((resolve, reject) => {
+      // timeout: abort if Cloudinary doesn't respond within 45 s
+      const timer = setTimeout(() => reject(new Error('Cloudinary upload timed out')), 45000);
+
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: 'goashore',
-          eager_async: true, // process transformations async, don't block the response
+          // Auto-select optimal format (WebP/AVIF where supported) and compress quality
+          transformation: [{ quality: 'auto:good', fetch_format: 'auto' }],
         },
         (error, result) => {
+          clearTimeout(timer);
           if (error) reject(error);
           else resolve(result);
         }
