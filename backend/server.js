@@ -226,7 +226,7 @@ app.post('/api/upload', uploadLimiter, async (req, res) => {
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: 'goashore',
-          transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+          eager_async: true, // process transformations async, don't block the response
         },
         (error, result) => {
           if (error) reject(error);

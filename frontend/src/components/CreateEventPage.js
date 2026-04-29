@@ -48,18 +48,17 @@ function CreateEventPage({ beaches, apiBase, showToast, onEventCreated, onCancel
     setPhotoPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Upload all staged files to /api/upload, return array of URL strings
+  // Upload all staged files to /api/upload in parallel, return array of URL strings
   const uploadPhotos = async (files) => {
-    const urls = [];
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append('photo', file);
-      const res = await axios.post(`${apiBase}/api/upload`, formData, {
+    const uploads = files.map((file) => {
+      const data = new FormData();
+      data.append('photo', file);
+      return axios.post(`${apiBase}/api/upload`, data, {
         headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      urls.push(res.data.url);
-    }
-    return urls;
+        timeout: 60000, // 60s per photo
+      }).then(res => res.data.url);
+    });
+    return Promise.all(uploads);
   };
 
   // ─── Drag-and-drop ────────────────────────────────────────────────────────
