@@ -6,6 +6,7 @@ import CreateEventPage from './components/CreateEventPage';
 import EventDetailPage from './components/EventDetailPage';
 import LoginPage from './components/LoginPage';
 import { ToastContainer } from './components/Toast';
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -216,6 +217,7 @@ function App() {
           />
         )}
       </main>
+      <SpeedInsights />
     </div>
   );
 }
